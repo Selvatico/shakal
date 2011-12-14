@@ -59,7 +59,7 @@ function bootApplication(app) {
         util.log("Game class loaded");
     });
     container.loadGamesClasses(app);
-
+    util.log("end");
     //GAME_CONTAINER.createGame("jakal", false, null);
 
 }

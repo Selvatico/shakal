@@ -2,6 +2,8 @@ var Jakal = function () {
     this.gameId = null;
     this.createTime = null;
     this.status = "NEW";
+    this.openBoard = [];
+    this.closedBoa = [];
     this.init.apply(this, arguments);
 };
 
@@ -13,6 +15,9 @@ Jakal.prototype = {
         for (var i in conf) {
             this[i] = conf[i];
         }
+    },
+    initBoard : function () {
+
     }
 };
 
