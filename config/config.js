@@ -7,7 +7,7 @@ function getConfig(section) {
             }
         },
         socketIO: {
-            sockerServer : "localmeet.com",
+            sockerServer : "",
             listenPort   : "8888"
         },
         debug : true,
@@ -16,8 +16,7 @@ function getConfig(section) {
             port : "3306",
             user : "root",
             psw  : "root",
-            db   : "weppo",
-            lib  : "new"
+            db   : ""
         }
     };
     return (section && config.hasOwnProperty(section)) ? config[section] : config;
