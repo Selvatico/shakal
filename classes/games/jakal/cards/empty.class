@@ -1,12 +1,15 @@
-var emptyField = function () {
-
+var EmptyField = function () {
+    this.init.apply(this, arguments);
 }
 
-emptyField.prototype = {
+EmptyField.prototype = {
+    init : function () {
+
+    }
 
 };
 
 
 exports.getCard = function () {
-    return emptyField();
+    return new EmptyField()
 }
