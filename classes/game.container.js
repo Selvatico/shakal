@@ -16,6 +16,10 @@ var GameContainer = function() {
 
 util.inherits(GameContainer, events.EventEmitter);
 
+/**
+ * Create unique ID for game object
+ * @param length
+ */
 GameContainer.prototype._createUID = function (length) {
     var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz";
     var randomstring = '';
