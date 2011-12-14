@@ -1,1 +1,3 @@
-dddg
+var emptyField = function () {
+
+}
