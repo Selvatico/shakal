@@ -18,6 +18,15 @@ Jakal.prototype = {
     },
     initBoard : function () {
 
+    },
+    killPirate : function () {
+
+    },
+    movePirate : function () {
+
+    },
+    backFromHeaven : function () {
+
     }
 };
 
