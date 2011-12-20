@@ -1,12 +1,7 @@
 var util = require('util');
 
 var JakalCards = function () {
-    this.init.apply(this, arguments);
-};
-
-//@todo add additional gun process
-JakalCards.prototype = {
-    config:{
+    this.config = {
         singleType:{
             penek:{count:40},
             hourse:{count:2},
@@ -17,25 +12,25 @@ JakalCards.prototype = {
             para:{count:2},
             fort:{count:2},
             healFort:{count:1},
-            ice : {count : 6},
-            trap : {count : 3},
-            gun : {count:2}
+            ice:{count:6},
+            trap:{count:3},
+            gun:{count:2}
         },
-        multiTypes : {
-            coins : {
-                coins_1 : {count : 5},
-                coins_2 : {count : 5},
-                coins_3 : {count : 3},
-                coins_4 : {count : 2},
-                coins_5 : {count : 1}
+        multiTypes:{
+            coins:{
+                coins_1:{count:5},
+                coins_2:{count:5},
+                coins_3:{count:3},
+                coins_4:{count:2},
+                coins_5:{count:1}
             },
             labirints:{
                 jungle:{count:4, needMove:2},
                 desert:{count:4, needMove:3},
-                slue:  {count:2, needMove:4},
-                rocks: {count:1, needMove:5}
+                slue:{count:2, needMove:4},
+                rocks:{count:1, needMove:5}
             },
-            arrows : {
+            arrows:{
                 oneArrow:{count:3, directions:["left", "right", "top", "bot"], multi:false},
                 oneCross:{
                     count:3,
@@ -58,19 +53,23 @@ JakalCards.prototype = {
                     ],
                     multi:true
                 },
-                fourCross : {
-                    count : 3,
-                    directions : [["left-bot", "right-bot", "left-top", "right-top"]],
-                    multi : true
+                fourCross:{
+                    count:3,
+                    directions:[
+                        ["left-bot", "right-bot", "left-top", "right-top"]
+                    ],
+                    multi:true
                 },
-                squareCross : {
-                    count : 3,
-                    directions : [["left", "right", "top", "bottom"]],
-                    multi : true
+                squareCross:{
+                    count:3,
+                    directions:[
+                        ["left", "right", "top", "bottom"]
+                    ],
+                    multi:true
                 },
-                threeWay  : {
-                    count : 3,
-                    directions : [
+                threeWay:{
+                    count:3,
+                    directions:[
                         ["top", "left", "right-bot"],
                         ["bot", "right", "left-top"]
                     ]
@@ -78,11 +77,16 @@ JakalCards.prototype = {
             }
         }
 
-    },
-    init : function () {
+    };
+    this.init.apply(this, arguments);
+};
+
+//@todo add additional gun process
+JakalCards.prototype = {
+    init:function () {
 
     },
-    shuffleCards : function (theArray, iteration) {
+    shuffleCards:function (theArray, iteration) {
         var len = theArray.length;
         for (var it = 0; it < iteration; it++) {
             var i = len;
@@ -96,23 +100,24 @@ JakalCards.prototype = {
         return theArray;
     },
 
-    createSingleCards : function () {
-        var _self = this, goNext = true, cards  = [];
+    createSingleCards:function () {
+        var _self = this, goNext = true, cards = [];
         while (goNext) {
             goNext = false;
             for (var n in _self.config.singleType) {
                 if (_self.config.singleType[n].count > 0) {
                     goNext = true;
-                    _self.config.singleType[n].count --;
-                    cards.push({name : n, type : "single", status : "closed", countPirates : 0});
+                    _self.config.singleType[n].count--;
+                    cards.push({name:n, type:"single", status:"closed", countPirates:0});
                 }
             }
         }
         cards = _self.shuffleCards(cards, 2);
-        console.log("SINGLE",util.inspect(cards, true, 10, true));
+        //console.log("SINGLE", util.inspect(cards, true, 10, true));
+        //console.log("SINGLE", cards);
         return cards;
     },
-    createMultiCards : function () {
+    createMultiCards:function () {
         var _self = this, goNext = true, cards = [];
         while (goNext) {
             goNext = false;
@@ -142,22 +147,20 @@ JakalCards.prototype = {
                                 break;
                         }
                         goNext = true;
+                        _self.config.multiTypes[n][p].count--;
                     }
                 }
             }
         }
         cards = _self.shuffleCards(cards, 2);
-        console.log("MULTI",util.inspect(cards, true, 10, true));
+        //console.log("MULTI LENGTH", cards.length);
+        //console.log("MULTI", util.inspect(cards, true, 10, true));
         return cards;
     },
-    createPlayGround : function () {
-        var _self = this;
-        //load single types cards
-        var singleCards = _self.createSingleCards();
-        var multiCards  = _self.createMultiCards();
+    createPlayGround:function () {
+        var _self = this, singleCards = _self.createSingleCards(), multiCards = _self.createMultiCards();
+        var newArr = [], cardMassive = [], popElement = null;
 
-        var newArr = null;
-        var cardMassive = [];
         for (var k = 0; k < 13; k++) {
             cardMassive = [];
             for (var r = 0; r < 13; r++) {
@@ -165,16 +168,24 @@ JakalCards.prototype = {
                     //add for this points sea card
                     if (k == 0 || k == 12 || r == 0 || r == 12
                         || (k == 1 && r == 1) || (k == 1 && r == 11) || (k == 11 && r == 1) || (k == 11 && r == 11)) {
-                        cardMassive.push({name:"sea", type:"simple", status:"open", countShips:0});
+                        cardMassive.push({name:"sea", type:"simple", status:"open", countShips:0, x : k, y : r});
                     } else if (singleCards.length > 0 && r % 2 == 0) {
-                        cardMassive.push(singleCards.pop());
+                        popElement = singleCards.pop();
+                        popElement.x = k;
+                        popElement.y = r;
+                        cardMassive.push(popElement);
                     } else if (multiCards.length > 0) {
-                        cardMassive.push(multiCards.pop());
+                        popElement = multiCards.pop();
+                        popElement.x = k;
+                        popElement.y = r;
+                        cardMassive.push(popElement);
                     }
                 }
             }
+            newArr.push(cardMassive);
         }
-        //console.log("FINAL MASSIVE",util.inspect(cardMassive, true, 10, true));
+        //console.log("FINAL MASSIVE",util.inspect(newArr, true, 10, true));
+        return newArr;
 
     }
 };

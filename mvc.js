@@ -55,12 +55,17 @@ function bootApplication(app) {
 
     //MAIN APPLICATION LOGIC
     var container = require("./classes/game.container").createContainer;
-    container.on("loadEnd", function (data) {
-        util.log("Game class loaded");
+    container.on("loadEnd", function (game) {
+        util.log("Container loaded");
+        container.createGame("jakal", false, null);
+    });
+    container.on("gameCreated", function (game) {
+        util.log("Game created");
+        game.initBoard();
+        //console.log("Created game", util.inspect(game, true, 10, true));
     });
     container.loadGamesClasses(app);
-    util.log("end");
-    //GAME_CONTAINER.createGame("jakal", false, null);
+
 
 }
 

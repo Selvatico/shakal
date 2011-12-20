@@ -4,7 +4,8 @@ var app = express.createServer();
 require('./mvc').boot(app);
 app.listen(3000);
 
-app.get(/.*/, function(req, res) {
+app.get(/.
+, function(req, res) {
   res.render("index");
 });
 

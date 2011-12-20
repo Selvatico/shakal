@@ -1,7 +1,7 @@
 (function(){
-  var crypt = require('crypt'),
-      utf8 = require('charenc').utf8,
-      bin = require('charenc').bin,
+  var crypt = require('../node_modules/crypt'),
+      utf8 = require('../node_modules/charenc').utf8,
+      bin = require('../node_modules/charenc').bin,
 
   // The core
   md5 = function (message) {

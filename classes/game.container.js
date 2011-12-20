@@ -3,7 +3,8 @@ var config     = require("../config/config");
 var redisModel = require("../models/redis.model").redisModel;
 var events     = require('events');
 var util       = require("util");
-var path = require('path');
+var path       = require('path');
+var md5        = require('../models/md5.model');
 
 var GameContainer = function() {
     this.gamesClasses = {};
