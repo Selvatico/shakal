@@ -4,6 +4,7 @@ var fs = require('fs')
 
 exports.boot = function (app) {
     bootApplication(app);
+    bootControllers(app);
 };
 
 // App settings and middleware
@@ -54,15 +55,9 @@ function bootApplication(app) {
     });
 
     //MAIN APPLICATION LOGIC
-    var container = require("./classes/game.container").createContainer;
+    var container = require("./classes/game.container").getContainer;
     container.on("loadEnd", function (game) {
         util.log("Container loaded");
-        container.createGame("jakal", false, null);
-    });
-    container.on("gameCreated", function (game) {
-        util.log("Game created");
-        game.initBoard();
-        //console.log("Created game", util.inspect(game, true, 10, true));
     });
     container.loadGamesClasses(app);
 
@@ -84,10 +79,26 @@ function bootControllers(app) {
 function bootController(app, file) {
     var name = file.replace('.js', '')
         , actions = require('./controllers/' + name)
-        , plural = name + 's' // realistically we would use an inflection lib
-        , prefix = '/' + plural;
+        , prefix = '/' + name;
 
     // Special case for "app"
-    if (name == 'app') prefix = '/';
-
+    //if (name == 'app') prefix = '/';
+    Object.keys(actions).map(function (action) {
+        //check httpMethod to route
+        var httpMethod = (action.search("ajx") == -1) ? "get" : "post";
+        var actionURL = (httpMethod == "post") ? action.replace("ajx", "").toLowerCase() : action;
+        console.log(httpMethod, prefix + '/' + actionURL);
+        app[httpMethod](prefix + '/' + actionURL, function(request, response){
+            console.log(request.query);
+            var data = actions[action](request);
+            var viewParams = (data != undefined) ? data : {};
+            if (httpMethod == "post") {
+                return response.send(viewParams);
+            } else {
+                response.render(name + "/" + action, viewParams);
+            }
+        });
+    });
 }
+
+

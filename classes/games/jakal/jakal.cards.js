@@ -153,21 +153,19 @@ JakalCards.prototype = {
             }
         }
         cards = _self.shuffleCards(cards, 2);
-        //console.log("MULTI LENGTH", cards.length);
-        //console.log("MULTI", util.inspect(cards, true, 10, true));
         return cards;
     },
     createPlayGround:function () {
         var _self = this, singleCards = _self.createSingleCards(), multiCards = _self.createMultiCards();
         var newArr = [], cardMassive = [], popElement = null;
 
-        for (var k = 0; k < 13; k++) {
+        for (var k = 0; k < 12; k++) {
             cardMassive = [];
-            for (var r = 0; r < 13; r++) {
+            for (var r = 0; r < 12; r++) {
                 if (singleCards.length > 0) {
                     //add for this points sea card
-                    if (k == 0 || k == 12 || r == 0 || r == 12
-                        || (k == 1 && r == 1) || (k == 1 && r == 11) || (k == 11 && r == 1) || (k == 11 && r == 11)) {
+                    if (k == 0 || k == 11 || r == 0 || r == 11
+                        || (k == 1 && r == 1) || (k == 1 && r == 10) || (k == 10 && r == 1) || (k == 10 && r == 10)) {
                         cardMassive.push({name:"sea", type:"simple", status:"open", countShips:0, x : k, y : r});
                     } else if (singleCards.length > 0 && r % 2 == 0) {
                         popElement = singleCards.pop();
@@ -184,7 +182,6 @@ JakalCards.prototype = {
             }
             newArr.push(cardMassive);
         }
-        //console.log("FINAL MASSIVE",util.inspect(newArr, true, 10, true));
         return newArr;
 
     }

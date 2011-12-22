@@ -70,7 +70,8 @@ GameContainer.prototype.createGame = function (gameName, restore, restoreId) {
         }
         _self.gamesObjects[gameNameUP][uid] = newGame;
         if (!restore) {
-            _self.emit("gameCreated", newGame);
+            //_self.emit("gameCreated", newGame);
+            return newGame;
         } else {
             redisModel.loadSavedGame(restoreId,
                 function (res, config) {
@@ -124,6 +125,6 @@ GameContainer.prototype.createPlyer = function (gameName, config) {
 
 var appContainer = new GameContainer();
 
-exports.createContainer = appContainer;
+exports.getContainer = appContainer;
 
 
