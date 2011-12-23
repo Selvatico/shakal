@@ -13,8 +13,7 @@ var JakalCards = function () {
             fort:{count:2},
             healFort:{count:1},
             ice:{count:6},
-            trap:{count:3},
-            gun:{count:2}
+            trap:{count:3}
         },
         multiTypes:{
             coins:{
@@ -29,6 +28,9 @@ var JakalCards = function () {
                 desert:{count:4, needMove:3},
                 slue:{count:2, needMove:4},
                 rocks:{count:1, needMove:5}
+            },
+            guns : {
+                gun : {count:2, directions:["left", "right", "top", "bot"], multi:false}
             },
             arrows:{
                 oneArrow:{count:3, directions:["left", "right", "top", "bot"], multi:false},
@@ -86,6 +88,11 @@ JakalCards.prototype = {
     init:function () {
 
     },
+    /**
+     * Method for shuffle cards arrays
+     * @param theArray
+     * @param iteration
+     */
     shuffleCards:function (theArray, iteration) {
         var len = theArray.length;
         for (var it = 0; it < iteration; it++) {
@@ -99,7 +106,10 @@ JakalCards.prototype = {
         }
         return theArray;
     },
-
+    /**
+     * Interate via all single cards add to array
+     * and shuffle them with random order
+     */
     createSingleCards:function () {
         var _self = this, goNext = true, cards = [];
         while (goNext) {
@@ -117,6 +127,10 @@ JakalCards.prototype = {
         //console.log("SINGLE", cards);
         return cards;
     },
+    /**
+     * Interate via all multi cards add to array
+     * and shuffle them with random order
+     */
     createMultiCards:function () {
         var _self = this, goNext = true, cards = [];
         while (goNext) {
@@ -128,7 +142,7 @@ JakalCards.prototype = {
                         switch (n) {
                             case "labirints" :
                                 cards.push(
-                                    {name:n, type:"multi", status:"closed", countPirates:0,
+                                    {name:p, type:"multi", status:"closed", countPirates:0,
                                         needMove:element.needMove
                                     });
                                 break;
@@ -137,13 +151,13 @@ JakalCards.prototype = {
                                     element.directions = _self.shuffleCards(element.directions, 1);
                                 }
                                 cards.push(
-                                    {name:n, type:"multi", status:"closed",
+                                    {name:p, type:"multi", status:"closed",
                                         countPirates:0, directions:element.directions[0]
                                     });
                                 break;
 
                             default :
-                                cards.push({name:n, type:"multi", status:"closed", countPirates:0});
+                                cards.push({name:p, type:"multi", status:"closed", countPirates:0});
                                 break;
                         }
                         goNext = true;
@@ -155,6 +169,33 @@ JakalCards.prototype = {
         cards = _self.shuffleCards(cards, 2);
         return cards;
     },
+    /**
+     * Check if given corrdinates is coordinates of the sea
+     * @param k int x - axis coordinat
+     * @param r int y - axis coordinat
+     */
+    checkSeaCard : function (k, r) {
+        return ((k == 0 || k == 11
+            || r == 0 || r == 11
+            || (k == 1 && r == 1) || (k == 1 && r == 10)
+            || (k == 10 && r == 1) || (k == 10 && r == 10)))
+    },
+    /**
+     * Check if move allowed by card rules
+     * @param needle
+     * @param haystack
+     */
+    moveAllowed : function (needle, haystack) {
+        var length = haystack.length;
+        for (var i = 0; i < length; i++) {
+            if (haystack[i] == needle) return true;
+        }
+        return false;
+    },
+    /**
+     * Accumulate methods for creating single and multi types cards
+     * and push them in random order to gaming desk
+     */
     createPlayGround:function () {
         var _self = this, singleCards = _self.createSingleCards(), multiCards = _self.createMultiCards();
         var newArr = [], cardMassive = [], popElement = null;
@@ -163,19 +204,15 @@ JakalCards.prototype = {
             cardMassive = [];
             for (var r = 0; r < 12; r++) {
                 if (singleCards.length > 0) {
-                    //add for this points sea card
-                    if (k == 0 || k == 11 || r == 0 || r == 11
-                        || (k == 1 && r == 1) || (k == 1 && r == 10) || (k == 10 && r == 1) || (k == 10 && r == 10)) {
+                    if (_self.checkSeaCard(k, r)) {
                         cardMassive.push({name:"sea", type:"simple", status:"open", countShips:0, x : k, y : r});
                     } else if (singleCards.length > 0 && r % 2 == 0) {
                         popElement = singleCards.pop();
-                        popElement.x = k;
-                        popElement.y = r;
+                        popElement.x = k; popElement.y = r;
                         cardMassive.push(popElement);
                     } else if (multiCards.length > 0) {
                         popElement = multiCards.pop();
-                        popElement.x = k;
-                        popElement.y = r;
+                        popElement.x = k; popElement.y = r;
                         cardMassive.push(popElement);
                     }
                 }
@@ -183,7 +220,62 @@ JakalCards.prototype = {
             newArr.push(cardMassive);
         }
         return newArr;
+    },
+    /**
+     * Calculate allowed moves from each card
+     * @param card
+     * @return obj card Card with calculated moves
+     */
+    caclulateMoves : function (card) {
+        var _self = this;
+       if (card.name) {
+           var moves   = [], allowed = [], x = card.x, y = card.y;
+           switch (card.name) {
+               case "sea" :
 
+                   break;
+               case "penek" :
+               case "rum" :
+               case "teleport" :
+               case "fort" :
+               case "healFort" :
+               case "trap" :
+                   moves = [
+                       [x - 1, y + 1], //left-top
+                       [x, y + 1], //top
+                       [x + 1, y + 1], //right-top
+                       [x - 1, y],//left
+                       [x - 1, y - 1],//left-bot
+                       [x, y - 1],//bot
+                       [x + 1, y - 1],//bot-right
+                       [x + 1, y]//right
+                   ];
+                   break;
+               case "hourse" :
+                   moves = [
+                          [x - 1, y + 2], //top-left
+                          [x + 1, y + 2], //top-right
+                          [x - 2, y + 1], //left-top
+                          [x - 2, y - 1], //left-bot
+                          [x - 1, y - 2], //bot-left
+                          [x + 1, y - 2], //bot-right
+                          [x + 2, y + 1], //right-top
+                          [x + 2, y - 1] //right-bot
+                      ];
+                   break;
+           }
+       }
+        if (moves.length > 0) {
+            moves.forEach(function (moveArr, i) {
+                if (!_self.checkSeaCard(moveArr[0], moveArr[1])) {
+                    allowed.push(moveArr);
+                }
+            });
+            card.allowedMoves = allowed;
+        } else {
+            card.allowedMoves = [];
+        }
+        return card;
     }
 };
 

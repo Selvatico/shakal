@@ -81,7 +81,6 @@ function bootController(app, file) {
         , actions = require('./controllers/' + name)
         , prefix = '/' + name;
 
-    // Special case for "app"
     //if (name == 'app') prefix = '/';
     Object.keys(actions).map(function (action) {
         //check httpMethod to route

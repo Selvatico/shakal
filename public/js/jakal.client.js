@@ -5,7 +5,7 @@ $(document).ready(function () {
     for (var i = 0; i < 12; i++) {
         addHtml = '<tr style="width: 50px;">';
         for (var n = 0; n < 12; n ++) {
-            id = i.toString() + "_" + n.toString()
+            id = i.toString() + "_" + n.toString();
             addHtml += '<td id="field_' + id + '" style="width: 50px;height: 50px;">' + i.toString() + "-" + n.toString() + '</td>'
         }
         addHtml += "</tr>";
@@ -31,11 +31,10 @@ function createGame()
                     function (data) {
                         console.log(data);
                         if (data.closedBoard) {
-                            console.log(1, typeof data.closedBoard);
                             for (var p = 0; p < 12; p++) {
                                 $.each(data.closedBoard[p], function (i, val) {
                                     var id = val.x.toString() + "_" + val.y.toString();
-                                    $("#field_" + id).html(val.name + "_" + id);
+                                    $("#field_" + id).html(val.name);
                                 })
                             }
                         }

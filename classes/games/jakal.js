@@ -22,7 +22,6 @@ Jakal.prototype = {
     initBoard : function () {
         var _self = this;
         _self.closedBoard = _self.deckObject.createPlayGround();
-        //console.log(JSON.stringify(this.closedBoard));
     },
     killPirate : function () {
 
