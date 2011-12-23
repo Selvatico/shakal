@@ -209,10 +209,12 @@ JakalCards.prototype = {
                     } else if (singleCards.length > 0 && r % 2 == 0) {
                         popElement = singleCards.pop();
                         popElement.x = k; popElement.y = r;
+                        popElement = _self.caclulateMoves(popElement);
                         cardMassive.push(popElement);
                     } else if (multiCards.length > 0) {
                         popElement = multiCards.pop();
                         popElement.x = k; popElement.y = r;
+                        popElement = _self.caclulateMoves(popElement);
                         cardMassive.push(popElement);
                     }
                 }
