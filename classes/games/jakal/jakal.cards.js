@@ -243,7 +243,7 @@ JakalCards.prototype = {
                 if (_self.checkSeaCard(k, r)) {
                     cardMassive.push({name:"sea", type:"simple", status:"open", countShips:0, x:k, y:r});
                 } else {
-                    cardMassive.push({name:"empty"});
+                    cardMassive.push({name:"empty", x:k, y:r});
                 }
             }
             newArr.push(cardMassive);

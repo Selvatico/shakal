@@ -92,13 +92,14 @@ GameContainer.prototype.createGame = function (gameName, restore, restoreId) {
  * @param gameName
  * @param player
  */
-GameContainer.prototype.joinGame = function (gameUID, gameName, player) {
+GameContainer.prototype.toGame = function (gameUID, gameName, player) {
     var _self = this;
     var findGame = _self.gamesObjects[gameName][gameUID];
     if (findGame) {
         findGame.addPlayer(player);
         return true;
     }
+    console.log("GAME NOT FOUND");
     return false;
 };
 
@@ -108,10 +109,10 @@ GameContainer.prototype.joinGame = function (gameUID, gameName, player) {
  * @param config
  */
 GameContainer.prototype.createPlyer = function (gameName, config) {
-    var _self = this;
-    var uid = _self._createUID(12);
-    var allowCreate = false;
-    var pathJs = __dirname + '/games/' + gameName.toLowerCase() + ".player";
+    var _self = this, uid = _self._createUID(12), allowCreate = false;
+    var game = gameName.toLowerCase();
+    var pathJs = __dirname + '/games/' + game + "/" + game + ".player";
+    util.log(pathJs);
     if (path.existsSync(pathJs + ".js")) {
         allowCreate = true;
     }

@@ -32,19 +32,23 @@ Jakal.prototype = {
         _self.openBoard   = _self.deckObject.createEmptyDeck();
     },
     makeTurn : function (playerId, data) {
-
+        console.log("make turn event");
     },
     backFromHeaven : function () {
 
     },
     addPlayer : function (player) {
+        console.log("ADD PLAYER");
         var _self = this;
         if (!_self.players[player.playerId] && _self.freeColors.length > 0) {
+            console.log("ADD DONE");
             player.color = _self.freeColors[0];
             _self.players[player.playerId] = player;
             player.socket.join(_self.socketRoom);
             player.socket.set("gameSettings", {player : player.playerId, gameId : _self.gameId, gameName : "JAKAL"});
-            player.socketSend("joined", {result : true, openBoard : _self.openBoard});
+            player.socketSend("joined", {result : true, board : _self.openBoard});
+        } else {
+
         }
     }
 
