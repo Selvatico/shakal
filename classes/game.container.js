@@ -97,8 +97,9 @@ GameContainer.prototype.joinGame = function (gameUID, gameName, player) {
     var findGame = _self.gamesObjects[gameName][gameUID];
     if (findGame) {
         findGame.addPlayer(player);
-        player.gameObject = findGame;
+        return true;
     }
+    return false;
 };
 
 /**
@@ -111,16 +112,32 @@ GameContainer.prototype.createPlyer = function (gameName, config) {
     var uid = _self._createUID(12);
     var allowCreate = false;
     var pathJs = __dirname + '/games/' + gameName.toLowerCase() + ".player";
-    if (_self.checkedPlayers[gameName]) {
-        allowCreate = true;
-    } else if (path.existsSync(pathJs + ".js")) {
+    if (path.existsSync(pathJs + ".js")) {
         allowCreate = true;
     }
     if (allowCreate) {
-        return require(pathJs).createPlayer(uid);
+        config.playerId = uid;
+        var player =  require(pathJs).getPlayer(config);
+        //_self.checkedPlayers[uid] = player;
+        return player;
     } else {
         util.log("undefined player class name");
     }
+};
+
+
+GameContainer.prototype.makeTurn = function (socket, data) {
+    var _self = this;
+    socket.get("gameSettings", function (err, memory){
+        if (memory != null) {
+            memory = JSON.parse(memory);
+            var findGame = _self.gamesObjects[memory.gameName][memory.gameId];
+            if (findGame) {
+                findGame.makeTurn(memory.playerId, data);
+            }
+        }
+    });
+
 };
 
 var appContainer = new GameContainer();

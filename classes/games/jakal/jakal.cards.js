@@ -235,6 +235,21 @@ JakalCards.prototype = {
         }
         return newArr;
     },
+    createEmptyDeck : function () {
+        var newArr = [], cardMassive = [], _self = this;
+        for (var k = 0; k < 13; k++) {
+            cardMassive = [];
+            for (var r = 0; r < 13; r++) {
+                if (_self.checkSeaCard(k, r)) {
+                    cardMassive.push({name:"sea", type:"simple", status:"open", countShips:0, x:k, y:r});
+                } else {
+                    cardMassive.push({name:"empty"});
+                }
+            }
+            newArr.push(cardMassive);
+        }
+        return newArr;
+    },
     /**
      * Calculate allowed moves from each card
      * @param card
