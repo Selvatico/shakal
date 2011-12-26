@@ -6,11 +6,10 @@ GameController.prototype = {
     socket  : null,
     myColor : null,
     myStatus: "MOVE",
+    step : 1,
     selectedTile : null,
-    myShip : {
-      minX : 0,
-      minY : 0
-    },
+    myShip : null,
+    shipNotAllowed : [],
     init:function (data) {
         for (var i in data) {
             this[i] = data[i];
@@ -24,14 +23,17 @@ GameController.prototype = {
     _sendSocketEvent : function (event, data) {
         this.socket.emit(event, data);
     },
-    _caclulateAllowedMoves : function (type, id) {
-        switch (type) {
+    _inArray : function(search, array) {
+
+    },
+    _checkMove : function (x, y) {
+        var _self = this, selected = x.toString() + "-" + y.toString();
+        switch (_self.selectedTile) {
             case "ship" :
-                var XY = id.replace("field_").split("_");
-                var x = XY[0];
-                var y = XY[1];
-
-
+                var currentIndex = jQuery.inArray(_self.myShip.current, _self.myShip.alowed);
+                var newIndex     = jQuery.inArray(selected, _self.myShip.alowed);
+                console.log(currentIndex, newIndex);
+                return (newIndex != -1 && (newIndex == (currentIndex-1) || newIndex == (currentIndex+1)));
                 break;
 
             case "pirate":
@@ -40,6 +42,9 @@ GameController.prototype = {
 
 
         }
+    },
+    _moveTile  : function () {
+
     },
     _fillBoard : function (data) {
         if (data.board) {
@@ -50,31 +55,30 @@ GameController.prototype = {
                     if (val.directions) {
                         imgName += "-" + val.directions.join("-");
                     }
-                    var imgHtml = '<img src="/img/' + imgName + '.png"  alt="">';
+                    var imgHtml = '<img class="tile" src="/img/' + imgName + '.png"  alt="">';
                     $("#field_" + id).html(imgHtml);
                 })
             }
         }
     },
     _initShips : function (data) {
-        var myShip = null;
         var _self  = this;
         if (data.ships) {
             $.each(data.ships, function (i, ship) {
                 //found my ship
                 if (_self.myColor == ship.color) {
-                    myShip = ship;
+                    _self.myShip = ship;
                 }
                 var id = ship.x.toString() + "_" + ship.y.toString();
                 var imgHtml = '<img class="ship" tile="ship" player="' + ship.color + '" src="/img/ship.png"  alt="">';
                 $("#field_" + id).html(imgHtml);
             });
         }
-        if (myShip != null) {
-
-        }
     },
     _initPirates: function (data) {
+
+    },
+    _moveShip : function (newX, newY) {
 
     },
     join:function () {
@@ -149,12 +153,25 @@ $(document).ready(function () {
             if ($(this).parent("td").hasClass("selectedItem")) {
                 $(this).parent("td").removeClass("selectedItem");
                 jakalControl.selectedTile = null;
+                jakalControl.step = 1;
             } else {
                 $(this).parent("td").addClass("selectedItem");
-                jakalControl.selectedTile = "SHIP";
+                jakalControl.selectedTile = "ship";
+                jakalControl.step = 2;
             }
         }
+        return false;
     });
+    $(".tile").live("click", function () {
+        if (jakalControl.step == 2) {
+            var XY = $(this).parent("td").attr("id").replace("field_", "").split("_");
+            if (jakalControl._checkMove(XY[0],XY[1])){
+                alert(1);
+            }
+
+        }
+    });
+
 
 
 
