@@ -4,7 +4,7 @@ var JakalCards = function () {
     this.config = {
         singleType:{
             penek:{count:40},
-            hourse:{count:2},
+            horse:{count:2},
             rum:{count:4},
             beast:{count:4},
             hungry:{count:1},
@@ -24,20 +24,22 @@ var JakalCards = function () {
                 coins_5:{count:1}
             },
             labirints:{
-                jungle:{count:4, needMove:2},
+                jungle:{count:5, needMove:2},
                 desert:{count:4, needMove:3},
                 slue:{count:2, needMove:4},
                 rocks:{count:1, needMove:5}
             },
             guns : {
-                gun : {count:2, directions:["left", "right", "top", "bot"], multi:false}
+                gun : {count:2,
+                    directions:[["left"], ["right"], ["top"], ["bot"]], multi:false}
             },
             arrows:{
-                oneArrow:{count:3, directions:["left", "right", "top", "bot"], multi:false},
+                oneArrow:{count:3, directions:[["left"], ["right"], ["top"], ["bot"]], multi:false},
                 oneCross:{
                     count:3,
-                    directions:["left-bot", "right-bot", "left-top", "right-top"],
-                    multi:false
+                    directions:[["left-bot"], ["right-bot"], ["left-top"], ["right-top"]],
+                    multi:false,
+                    shuffle: true
                 },
                 twoCross:{
                     count:3,
@@ -45,7 +47,8 @@ var JakalCards = function () {
                         ["left-top", "right-bot"],
                         ["right-top", "left-bot"]
                     ],
-                    multi:true
+                    multi:true,
+                    shuffle: true
                 },
                 twoSquare:{
                     count:3,
@@ -53,28 +56,32 @@ var JakalCards = function () {
                         ["left", "right"],
                         ["top", "bot"]
                     ],
-                    multi:true
+                    multi:true,
+                    shuffle: true
                 },
                 fourCross:{
                     count:3,
                     directions:[
-                        ["left-bot", "right-bot", "left-top", "right-top"]
+                        [["left-bot"], ["right-bot"], ["left-top"], ["right-top"]]
                     ],
-                    multi:true
+                    multi:true,
+                    shuffle: false
                 },
                 squareCross:{
                     count:3,
                     directions:[
-                        ["left", "right", "top", "bottom"]
+                        [["left"], ["right"], ["top"], ["bottom"]]
                     ],
-                    multi:true
+                    multi:true,
+                    shuffle: false
                 },
                 threeWay:{
                     count:3,
                     directions:[
                         ["top", "left", "right-bot"],
                         ["bot", "right", "left-top"]
-                    ]
+                    ],
+                    shuffle: false
                 }
             }
         }
@@ -147,9 +154,16 @@ JakalCards.prototype = {
                                     });
                                 break;
                             case "arrows" :
-                                if (element.directions.length > 1) {
+                                if (element.directions.length > 1 && element.shuffle) {
                                     element.directions = _self.shuffleCards(element.directions, 1);
                                 }
+                                cards.push(
+                                    {name:p, type:"multi", status:"closed",
+                                        countPirates:0, directions:element.directions[0]
+                                    });
+                                break;
+                            case "guns" :
+                                element.directions = _self.shuffleCards(element.directions, 1);
                                 cards.push(
                                     {name:p, type:"multi", status:"closed",
                                         countPirates:0, directions:element.directions[0]
@@ -175,10 +189,10 @@ JakalCards.prototype = {
      * @param r int y - axis coordinat
      */
     checkSeaCard : function (k, r) {
-        return ((k == 0 || k == 11
-            || r == 0 || r == 11
-            || (k == 1 && r == 1) || (k == 1 && r == 10)
-            || (k == 10 && r == 1) || (k == 10 && r == 10)))
+        return ((k == 0 || k == 12
+            || r == 0 || r == 12
+            || (k == 1 && r == 1) || (k == 1 && r == 11)
+            || (k == 11 && r == 1) || (k == 11 && r == 11) ))
     },
     /**
      * Check if move allowed by card rules
@@ -199,20 +213,18 @@ JakalCards.prototype = {
     createPlayGround:function () {
         var _self = this, singleCards = _self.createSingleCards(), multiCards = _self.createMultiCards();
         var newArr = [], cardMassive = [], popElement = null;
+        var cardsPull = singleCards.concat(multiCards);
+        cardsPull = _self.shuffleCards(cardsPull, 2);
+        console.log("!!!!!!!!!",cardsPull.length);
 
-        for (var k = 0; k < 12; k++) {
+        for (var k = 0; k < 13; k++) {
             cardMassive = [];
-            for (var r = 0; r < 12; r++) {
+            for (var r = 0; r < 13; r++) {
                 if (singleCards.length > 0) {
                     if (_self.checkSeaCard(k, r)) {
                         cardMassive.push({name:"sea", type:"simple", status:"open", countShips:0, x : k, y : r});
-                    } else if (singleCards.length > 0 && r % 2 == 0) {
-                        popElement = singleCards.pop();
-                        popElement.x = k; popElement.y = r;
-                        popElement = _self.caclulateMoves(popElement);
-                        cardMassive.push(popElement);
-                    } else if (multiCards.length > 0) {
-                        popElement = multiCards.pop();
+                    } else {
+                        popElement = cardsPull.pop();
                         popElement.x = k; popElement.y = r;
                         popElement = _self.caclulateMoves(popElement);
                         cardMassive.push(popElement);
@@ -253,7 +265,7 @@ JakalCards.prototype = {
                        [x + 1, y]//right
                    ];
                    break;
-               case "hourse" :
+               case "horse" :
                    moves = [
                           [x - 1, y + 2], //top-left
                           [x + 1, y + 2], //top-right
