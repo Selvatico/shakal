@@ -215,7 +215,6 @@ JakalCards.prototype = {
         var newArr = [], cardMassive = [], popElement = null;
         var cardsPull = singleCards.concat(multiCards);
         cardsPull = _self.shuffleCards(cardsPull, 2);
-        console.log("!!!!!!!!!",cardsPull.length);
 
         for (var k = 0; k < 13; k++) {
             cardMassive = [];

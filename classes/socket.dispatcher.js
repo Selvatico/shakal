@@ -3,7 +3,7 @@ var util = require('util');
 
 var controller = {
     joinGame:function (data, socket) {
-        util.log("JOIN EVENT", data);
+        util.log("JOIN EVENT");
         var player = container.createPlyer(data.gameName, {socket:socket});
         container.toGame(data.gameId, data.gameName, player);
     },

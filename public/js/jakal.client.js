@@ -3,7 +3,14 @@ var GameController = function () {
 };
 
 GameController.prototype = {
-    socket : null,
+    socket  : null,
+    myColor : null,
+    myStatus: "MOVE",
+    selectedTile : null,
+    myShip : {
+      minX : 0,
+      minY : 0
+    },
     init:function (data) {
         for (var i in data) {
             this[i] = data[i];
@@ -17,6 +24,23 @@ GameController.prototype = {
     _sendSocketEvent : function (event, data) {
         this.socket.emit(event, data);
     },
+    _caclulateAllowedMoves : function (type, id) {
+        switch (type) {
+            case "ship" :
+                var XY = id.replace("field_").split("_");
+                var x = XY[0];
+                var y = XY[1];
+
+
+                break;
+
+            case "pirate":
+
+                break;
+
+
+        }
+    },
     _fillBoard : function (data) {
         if (data.board) {
             for (var p = 0; p < 13; p++) {
@@ -24,14 +48,34 @@ GameController.prototype = {
                     var id = val.x.toString() + "_" + val.y.toString();
                     var imgName = val.name;
                     if (val.directions) {
-                        console.log(val.directions, val.name);
                         imgName += "-" + val.directions.join("-");
                     }
-                    var imgHtml = '<img src="/img/' + imgName + '.png" style="width:50px;height:50px;" alt="">';
+                    var imgHtml = '<img src="/img/' + imgName + '.png"  alt="">';
                     $("#field_" + id).html(imgHtml);
                 })
             }
         }
+    },
+    _initShips : function (data) {
+        var myShip = null;
+        var _self  = this;
+        if (data.ships) {
+            $.each(data.ships, function (i, ship) {
+                //found my ship
+                if (_self.myColor == ship.color) {
+                    myShip = ship;
+                }
+                var id = ship.x.toString() + "_" + ship.y.toString();
+                var imgHtml = '<img class="ship" tile="ship" player="' + ship.color + '" src="/img/ship.png"  alt="">';
+                $("#field_" + id).html(imgHtml);
+            });
+        }
+        if (myShip != null) {
+
+        }
+    },
+    _initPirates: function (data) {
+
     },
     join:function () {
         var _self = this;
@@ -44,8 +88,11 @@ GameController.prototype = {
             });
     },
     joinedAction : function(data) {
-        //console.log(2222,data);
+        console.log("joined data", data);
+        this.myColor = data.color;
         this._fillBoard(data);
+        this._initPirates(data);
+        this._initShips(data);
     }
 
 };
@@ -77,6 +124,7 @@ $(document).ready(function () {
     socketGame.on('connect', function () {
         jakalControl.socket = socketGame;
         console.log("connected");
+        jakalControl.join();
         //jakalControl.connectAction();
     });
 
@@ -91,30 +139,25 @@ $(document).ready(function () {
                 var actionName = data.action + "Action";
                 if (typeof jakalControl[actionName] == "function") {
                     jakalControl[actionName](data);
-                } else {
-                    //alert(actionName + " NOT DEFINED");
                 }
             }
         }
     });
 
+    $(".ship").live("click", function () {
+        if ($(this).attr("player") == jakalControl.myColor && jakalControl.myStatus == "MOVE") {
+            if ($(this).parent("td").hasClass("selectedItem")) {
+                $(this).parent("td").removeClass("selectedItem");
+                jakalControl.selectedTile = null;
+            } else {
+                $(this).parent("td").addClass("selectedItem");
+                jakalControl.selectedTile = "SHIP";
+            }
+        }
+    });
+
+
+
 
 });
 
-
-function createGame() {
-    $.post("/main/creategame", {aa:1},
-        function (data) {
-            if (data.id) {
-                fillDeck(data)
-            }
-        });
-}
-
-function fillDeck(data) {
-    $.post("/main/desk", { id:data.id},
-        function (data) {
-            console.log(data);
-
-        });
-}

@@ -99,7 +99,7 @@ GameContainer.prototype.toGame = function (gameUID, gameName, player) {
         findGame.addPlayer(player);
         return true;
     }
-    console.log("GAME NOT FOUND");
+    util.log("Fault join game " + gameUID);
     return false;
 };
 
@@ -122,7 +122,7 @@ GameContainer.prototype.createPlyer = function (gameName, config) {
         //_self.checkedPlayers[uid] = player;
         return player;
     } else {
-        util.log("undefined player class name");
+        util.log(" undefined player class name: " + pathJs);
     }
 };
 

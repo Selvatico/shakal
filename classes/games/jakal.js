@@ -1,3 +1,5 @@
+var util = require('util');
+
 var Jakal = function () {
     this.gameId = null;
     this.createTime = null;
@@ -32,16 +34,19 @@ Jakal.prototype = {
         var _self = this;
         _self.closedBoard = _self.deckObject.createPlayGround();
         _self.openBoard   = _self.deckObject.createEmptyDeck();
+        _self.initGameObjects();
     },
     initGameObjects : function () {
         var _self = this;
         _self.ships = [
-            {color : "red", x : 6 , y : 0},
-            {color : "green", x : 0, y : 6},
-            {color : "green", x : 12, y : 6},
-            {color : "green", x : 6, y : 6}
+            {color : "red",   x : 6 , y : 0,   piratesOnBoard : 3},
+            {color : "pink",  x : 0,  y : 6,   piratesOnBoard : 3},
+            {color : "green", x : 12, y : 6,   piratesOnBoard : 3},
+            {color : "black", x : 6,  y : 12,  piratesOnBoard : 3}
         ];
-        _self.pirates = [];
+        _self.pirates = [
+
+        ];
     },
     makeTurn : function (playerId, data) {
         console.log("make turn event");
@@ -50,15 +55,23 @@ Jakal.prototype = {
 
     },
     addPlayer : function (player) {
-        console.log("ADD PLAYER");
+
         var _self = this;
         if (!_self.players[player.playerId] && _self.freeColors.length > 0) {
-            console.log("ADD DONE");
             player.color = _self.freeColors[0];
             _self.players[player.playerId] = player;
             player.socket.join(_self.socketRoom);
             player.socket.set("gameSettings", {player : player.playerId, gameId : _self.gameId, gameName : "JAKAL"});
-            player.socketSend("joined", {result : true, board : _self.openBoard});
+            player.socketSend("joined",
+                {
+                    result:true,
+                    board:_self.openBoard,
+                    ships:_self.ships,
+                    pirates : _self.pirates,
+                    color : player.color
+                }
+            );
+            util.log("New player added: " + player.playerId);
         } else {
 
         }
