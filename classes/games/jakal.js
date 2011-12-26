@@ -8,6 +8,8 @@ var Jakal = function () {
     this.deathPool = null;
     this.players = {};
     this.freeColors = ["red", "green", "pink", "black"];
+    this.ships = null;
+    this.pirates = [];
     this.socketRoom = "";
     this.init.apply(this, arguments);
 };
@@ -30,6 +32,16 @@ Jakal.prototype = {
         var _self = this;
         _self.closedBoard = _self.deckObject.createPlayGround();
         _self.openBoard   = _self.deckObject.createEmptyDeck();
+    },
+    initGameObjects : function () {
+        var _self = this;
+        _self.ships = [
+            {color : "red", x : 6 , y : 0},
+            {color : "green", x : 0, y : 6},
+            {color : "green", x : 12, y : 6},
+            {color : "green", x : 6, y : 6}
+        ];
+        _self.pirates = [];
     },
     makeTurn : function (playerId, data) {
         console.log("make turn event");

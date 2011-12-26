@@ -269,6 +269,7 @@ JakalCards.prototype = {
                case "fort" :
                case "healFort" :
                case "trap" :
+                   //@todo this is incorrect REMADE
                    moves = [
                        [x - 1, y + 1], //left-top
                        [x, y + 1], //top
