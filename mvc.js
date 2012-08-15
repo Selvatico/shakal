@@ -86,9 +86,9 @@ function bootController(app, file) {
         //check httpMethod to route
         var httpMethod = (action.search("ajx") == -1) ? "get" : "post";
         var actionURL = (httpMethod == "post") ? action.replace("ajx", "").toLowerCase() : action;
-        console.log(httpMethod, prefix + '/' + actionURL);
+        console.log(2, httpMethod, prefix + '/' + actionURL);
         app[httpMethod](prefix + '/' + actionURL, function(request, response){
-            console.log(request.query);
+            console.log(1, request.query);
             var data = actions[action](request);
             var viewParams = (data != undefined) ? data : {};
             if (httpMethod == "post") {
@@ -98,6 +98,7 @@ function bootController(app, file) {
             }
         });
     });
+    console.log(app);
 }
 
 

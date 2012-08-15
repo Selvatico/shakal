@@ -13,7 +13,6 @@ module.exports = {
     },
     ajxCreateGame:function (req, res) {
         var newGame = container.createGame("jakal", false, null);
-        console.log(newGame);
         newGame.initBoard();
         return {id : newGame.gameId};
     }

@@ -7,8 +7,8 @@ function getConfig(section) {
             }
         },
         socketIO: {
-            sockerServer : "",
-            listenPort   : "8888"
+            sockerServer : "192.168.1.17",
+            listenPort   : "8889"
         },
         debug : true,
         mysql   : {
